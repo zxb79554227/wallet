@@ -5,19 +5,17 @@
 </template>
 
 <script>
-
-
 export default {
-  name: 'App',
-  data(){
-    return{
-      addrExist:localStorage.addr
-    }
+  name: "App",
+  data() {
+    return {
+      addrExist: localStorage.mainAddress
+    };
   },
-  mounted(){
+  mounted() {
     // localStorage.addr = 'alsdfjlsdkj'
   }
-}
+};
 </script>
 
 <style>

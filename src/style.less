@@ -1,25 +1,85 @@
 //全局使用主题
-@themeBlue:#849ef8;
-@themeDark:rgba(51,54,73,1);
+@themeYellow: #fa6400;
+@themeBlue: #849ef8;
+@themeDark: rgba(51, 54, 73, 1);
 //字号
-@fontCN:'PingFangSC-Medium','PingFang SC';
+@fontCN: "PingFangSC-Medium", "PingFang SC";
 .super-title-CN {
-    font-size:34px;
-    font-family:@fontCN;
-    font-weight:500;
-    }
-.md-title-CN{
-    font-size:20px;
-    font-family:@fontCN;
-    font-weight:500;
-}    
-*{
-    padding: 0;
-    margin:0;
-    ::-webkit-scrollbar {/*隐藏滚轮*/
-        display: none;
-        }
-        
+  font-size: 34px;
+  font-family: @fontCN;
+  font-weight: 600;
 }
+.md-title-CN {
+  font-size: 20px;
+  font-family: @fontCN;
+  font-weight: 500;
+}
+.md-content-CN {
+  font-size: 14px;
+  font-family: @fontCN;
+  font-weight: 300;
+}
+.lg-content-CN {
+  font-size: 16px;
+  font-family: @fontCN;
+  font-weight: 300;
+}
+.sm-content-CN {
+  font-size: 12px;
+  font-family: @fontCN;
+  font-weight: 300;
+}
+* {
+  padding: 0;
+  margin: 0;
 
-
+  ::-webkit-scrollbar {
+    /*隐藏滚轮*/
+    display: none;
+  }
+}
+.normal-shadow {
+  box-shadow: 1px 1.5px 8px rgba(51, 54, 73, 0.3);
+}
+.flex-parent {
+  display: flex;
+}
+.dialog {
+  padding: 35px 15px 15px 15px;
+  text-align: left;
+}
+.input-box {
+  margin: 15px 10px;
+  .van-field__control {
+    margin-top: 5px;
+    background-color: #0000001c;
+    border-radius: 5px;
+    padding: 10px 15px;
+  }
+  .van-radio-group {
+    margin-top: 5px !important;
+    .van-radio {
+      margin-bottom: 5px;
+    }
+    .van-radio__label {
+      .lg-content-CN;
+    }
+    .van-button {
+      margin: 35px 0 0 0;
+      width: 100%;
+      border-radius: 5px;
+      background-color: @themeBlue;
+    }
+  }
+}
+.coin-account-box {
+  .van-tabs__content {
+    border-top: 0.5px solid rgba(51, 54, 73, 0.3);
+  }
+  .van-tab {
+    border-right: 0.5px solid rgba(51, 54, 73, 0.3);
+  }
+  .van-tabs__line {
+    background-color: @themeYellow;
+  }
+}
