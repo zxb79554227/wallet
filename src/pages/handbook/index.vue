@@ -1,42 +1,10 @@
 <template>
   <div class="handbook-container">
     <div class="to-back">
-      <img
-        @click="$router.back()"
-        src="../../assets/icons/back_black.png"
-        alt="返回"
-      />
+      <img @click="$router.back()" src="../../assets/icons/back_black.png" alt="返回" />
       <h1>帮助中心</h1>
     </div>
-    <header class="header-container">
-      <img
-        src="../../assets/img/findBack.png"
-        alt="找回钱包"
-        @click="clearStroge"
-      />
-    </header>
-    <div class="content-container">
-      <div
-        class="item-container"
-        v-for="({ title, items }, index) in handbook_list"
-        :key="index"
-      >
-        <h2 class="item-title">{{ title }}</h2>
-        <div class="item-content">
-          <li
-            v-for="({ id, text, logo }, index) in items"
-            :key="index"
-            @click="toDetail(id)"
-          >
-            <div>
-              <img :src="logo" alt="logo图" />
-              <span>{{ text }}</span>
-            </div>
-            <img src="../../assets/icons/toGo.png" alt="标志" />
-          </li>
-        </div>
-      </div>
-    </div>
+    <router-view></router-view>
   </div>
 </template>
 

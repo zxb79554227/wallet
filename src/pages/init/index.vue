@@ -50,6 +50,7 @@
 </template>
 <script>
 /* eslint-disable */
+import coinList from "../../coinList";
 import { addBandRetrieve } from "../../chain33API/chain33apiDB";
 import WalletBuilder from "./init";
 export default {
@@ -73,6 +74,7 @@ export default {
     }
   },
   mounted() {
+    console.log(coinList);
     if (localStorage.mainAddress) {
       this.$router.push("/");
     }
@@ -99,6 +101,7 @@ export default {
             localStorage.retrieveHash = res;
             localStorage.enableRetrieve = true;
             await this.db.USERINFO.update(1, {
+              walletName: this.walletName,
               retrieve: "added",
               retrieveHash: res
             });
@@ -116,17 +119,26 @@ export default {
         console.log("db已经存在");
       } else {
         console.log("生成db");
-        this.db.USERINFO.put({
+        await this.db.USERINFO.put({
           id: 1,
           phone: null,
           retrieve: "",
           hash: "",
           status: null
         });
-        await this.db.WALLET.put({ coinName: "BTY" });
-        await this.db.WALLET.put({ coinName: "CCNY" });
-        await this.db.P_WALLET.put({ coinName: "BTY" });
-        await this.db.P_WALLET.put({ coinName: "CCNY" });
+        coinList.map(async i => {
+          if(i === 'BTY'){
+            await this.db.WALLET.put({ coin: i.toLowerCase() , execer: 'coins', coinName: 'coins.'+ i.toLowerCase()});
+            await this.db.P_WALLET.put({ coin: i.toLowerCase() , execer: 'coins', coinName: 'coins.'+ i.toLowerCase()});
+          }else{
+            await this.db.WALLET.put({ coin: i , execer: 'token', coinName: 'token.'+ i});
+            await this.db.P_WALLET.put({ coin: i , execer: 'token',coinName: 'token.'+ i });
+          }
+        });
+        // await this.db.WALLET.put({ coinName: "BTY" });
+        // await this.db.WALLET.put({ coinName: "CCNY" });
+        // await this.db.P_WALLET.put({ coinName: "BTY" });
+        // await this.db.P_WALLET.put({ coinName: "CCNY" });
       }
     },
     async initNewWallet(lang, acountName) {
@@ -134,7 +146,6 @@ export default {
       let mnemonic = await builder.getNewMnemonic(lang);
       localStorage.mnemonic = mnemonic;
       let wallet = await builder.createWallet(mnemonic);
-      console.log(wallet);
       let account = await builder.createAccount(wallet, acountName);
       localStorage.mainAddress = account.address;
       localStorage.privateKey = account.hexPrivateKey;

@@ -3,9 +3,10 @@ import {
   mainChainPrefix,
   paraChainPrefix,
   GUARDIAN_ADDR,
+  coinInfor,
   INIT_FUEL_ACCOUNT_PRIKEY,
   chainNamePrefix,
-} from "./config";
+} from "./testConfig";
 // 处理器转地址
 export async function GETEXCADDR(execerName) {
   return await fetch(mainChainPrefix, {
@@ -811,16 +812,36 @@ export async function WITHDRAWMAINCHAIN(param) {
   })
     .then((response) => response.json())
     .then((rlt) => {
+      console.log(rlt);
+      
       if (!rlt.error) {
         return rlt.result;
       }
     });
 }
 
+//获取市场数据
+export async function getMarketData(coin){
+  return await fetch(coinInfor,{
+    body:JSON.stringify({
+      names:[coin]
+    }),
+    headers:{
+      "Content-Type":"application/json"
+    },
+    method:"POST"
+  }).then(res => res.json())
+  .then(rlt=>{
+    if(!rlt.err){
+      return rlt
+    }
+  })
+}
+
 //获取余额
 export async function getTokenBalance(params) {
-  if (params.url === main) {
-    await fetch(mainChainPrefix, {
+  if (params.url === "main") {
+    return await fetch(mainChainPrefix, {
       body: JSON.stringify({
         id: 11121212121,
         method: "Chain33.GetBalance",
@@ -842,7 +863,7 @@ export async function getTokenBalance(params) {
         return rlt;
       });
   } else {
-    await fetch(paraChainPrefix, {
+    return await fetch(paraChainPrefix, {
       body: JSON.stringify({
         id: 11121212121,
         method: "Chain33.GetBalance",
@@ -960,7 +981,7 @@ export async function addBandRetrieve(addr, privkey) {
 /**
  * 设置币种限额(代扣模式)
  */
-export async function setCoinLimit(symbol, limitNum, payforKey, localKey) {
+export async function setCoinLimit(symbol, limitNum, localKey) {
   let createRlt = await fetch(paraChainPrefix, {
     body: JSON.stringify({
       jsonrpc: "2.0",
@@ -997,7 +1018,7 @@ export async function setCoinLimit(symbol, limitNum, payforKey, localKey) {
       params: [
         {
           txHex: createRlt,
-          privkey: payforKey,
+          privkey: INIT_FUEL_ACCOUNT_PRIKEY,
           expire: "600s",
         },
       ],
@@ -1061,6 +1082,7 @@ export async function setCoinLimit(symbol, limitNum, payforKey, localKey) {
   })
     .then((response) => response.json())
     .then(async (rlt) => {
+      console.log(rlt);
       if (rlt.result) {
         return rlt;
       }
@@ -1090,7 +1112,7 @@ export async function getTokenInfo(coinNames) {
 }
 
 //查看钱包状态
-export async function checkWalletStatus(addr) {
+export async function checkWalletStatus() {
   return fetch(paraChainPrefix, {
     body: JSON.stringify({
       jsonrpc: "2.0",
@@ -1101,7 +1123,7 @@ export async function checkWalletStatus(addr) {
           execer: chainNamePrefix + "uwallet",
           funcName: "GetUWalletInfo",
           payload: {
-            address: addr,
+            address: localStorage.mainAddress,
           },
         },
       ],
@@ -1206,7 +1228,7 @@ export async function addContacts(
     });
 }
 //删除联系人（代扣）
-export async function deleteContact(contactAddr, payforKey, privkey) {
+export async function deleteContact(contactAddr, privkey) {
   let create = await fetch(paraChainPrefix, {
     body: JSON.stringify({
       jsonrpc: "2.0",
@@ -1234,7 +1256,7 @@ export async function deleteContact(contactAddr, payforKey, privkey) {
       params: [
         {
           txHex: create,
-          privkey: payforKey,
+          privkey: INIT_FUEL_ACCOUNT_PRIKEY,
           expire: "600s",
         },
       ],

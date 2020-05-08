@@ -2,16 +2,16 @@
   <div>
     <div class="page-head">
       <div class="title super-title-CN">找回钱包</div>
-      <div class="comeIn-handbook">帮助中心</div>
+      <div class="comeIn-handbook" @click="navigatingTo('/handbook')">帮助中心</div>
     </div>
     <div class="account-card">
-      <div>的钱包</div>
-      <div class="super-title-CN total">0.00</div>
+      <div>{{userName}}的钱包</div>
+      <div class="super-title-CN total">¥{{accountTotal | showMoney}}</div>
       <div class="flex-parent">
         <div class="addr">
           {{
-            mainAddress &&
-              `${mainAddress.slice(0, 10)}...${mainAddress.slice(-7)}`
+          mainAddress &&
+          `${mainAddress.slice(0, 10)}...${mainAddress.slice(-7)}`
           }}
         </div>
         <div>
@@ -29,17 +29,12 @@
       </div>
     </div>
     <div class="coin-account-box">
-      <van-tabs
-        v-model="acountActive"
-        swipeable
-        class="tabs"
-        title-active-color="#fa6400"
-      >
+      <van-tabs v-model="acountActive" swipeable class="tabs" title-active-color="#fa6400">
         <van-tab title="钱包账户" class="text-left">
           <div class="acount-balance">
             <div class="sm-content-CN">钱包资产折合(CNY)</div>
             <div>
-              <span class="lg-content-CN">≈¥123</span>
+              <span class="lg-content-CN">≈¥{{walletTotal | showMoney}}</span>
             </div>
           </div>
         </van-tab>
@@ -47,38 +42,40 @@
           <div class="acount-balance">
             <div class="sm-content-CN">找回钱包资产折合(CNY)</div>
             <div>
-              <span class="lg-content-CN">≈¥232</span>
+              <span class="lg-content-CN">≈¥{{p_walletTotal | showMoney}}</span>
             </div>
           </div>
         </van-tab>
       </van-tabs>
     </div>
-    <div>
+    <div class="coinsList-contianer">
       <ul class="coin-items" v-if="acountActive === 0">
-        <!-- <Item
+        <Item
           v-for="i in coinsData"
           :key="i.id"
-          :id="i.coinName"
-          :rmb="i.rmb"
-          :balance="i.balance"
-          :icon="i.icon"
-        ></Item> -->
+          :id='i.coin'
+          :rmb='i.rmb'
+          :icon='i.icon'
+          :balance='i.balance'
+        ></Item>
       </ul>
       <ul class="coin-items" v-else-if="acountActive === 1">
-        <!-- <UwalletItem
-            v-for="i in p_coinsData"
-            :key="i.id"
-            :id="i.coinName"
-            :rmb="i.rmb"
-            :balance="i.balance"
-            :icon="i.icon"
-        ></UwalletItem>-->
+        <Item
+          v-for="i in p_coinsData"
+          :key="i.id"
+          :id='i.coin'
+          :rmb='i.rmb'
+          :icon='i.icon'
+          :balance='i.balance'
+          :isPara="true"
+        ></Item>
       </ul>
     </div>
   </div>
 </template>
 
 <script>
+import Item from '../../components/item'
 import Clipboard from "clipboard";
 export default {
   data() {
@@ -86,9 +83,42 @@ export default {
       acountActive: 0,
       mainAddress: localStorage.mainAddress,
       bandingUser: false,
+      userName:'',
+      coinsData:[],
+      p_coinsData:[],
+      walletTotal: 0,
+      p_walletTotal: 0,
+      accountTotal: 0,
     };
   },
+  components:{
+    Item
+  },
+  created(){
+    this.getWalletName()
+    this.setCoinData()
+  },
   methods: {
+    async getWalletName(){
+      await this.db.USERINFO.get(1,res=>{
+        this.userName = res.walletName
+      })
+    },
+    async setCoinData(){
+      await this.db.WALLET.toArray(async res=>{
+         this.coinsData = res
+          await res.reduce((acc)=>{
+            this.walletTotal = acc.balance
+          })
+      })
+      await this.db.P_WALLET.toArray(async res=>{
+        this.p_coinsData= res
+          await res.reduce((acc)=>{
+            this.p_walletTotal = acc.balance
+          })
+      })
+      this.accountTotal = this.p_walletTotal+ this.walletTotal
+    },
     copyAddress() {
       if (this.bandingUser == false) {
         this.$dialog
@@ -96,15 +126,15 @@ export default {
             title: "需要绑定手机",
             messageAlign: "left",
             confirmButtonText: "去绑定",
-            message: `为了保证找回功能能够正常使用，请先绑定您的手机号码`,
+            message: `为了保证找回功能能够正常使用，请先绑定您的手机号码`
           })
-          .then((action) => {
+          .then(action => {
             if (action === "confirm") {
               this.$router.push({
                 path: "/my",
                 query: {
-                  showDialog: true,
-                },
+                  showDialog: true
+                }
               });
             } else {
               this.$dialog.close();
@@ -117,11 +147,11 @@ export default {
           message: "复制成功",
           type: "success",
           forbidClick: true,
-          duration: 1500,
+          duration: 1500
         });
       }
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -175,6 +205,8 @@ export default {
   height: 23px;
   padding-left: 15px;
 }
-.addr {
+.coinsList-contianer{
+  width: 90%;
+  margin: 15px auto ;
 }
 </style>

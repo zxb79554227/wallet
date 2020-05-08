@@ -12,15 +12,25 @@
           </van-col>
           <van-col span="10" class="coin">
             <div class="title-1">
-              <div v-if="!id">----</div>
-              <div v-else>123</div>
+              <div v-if="!id">----
+              </div>
+              <div v-else>
+                <van-row type='flex'>
+                  <van-col>
+                      {{id}}
+                  </van-col>
+                  <van-col>
+                    <van-tag color="#849EF8" class="tag-box" v-if="isPara">合约</van-tag>
+                  </van-col>
+                </van-row>
+              </div>
               <span class="fs-1"></span>
             </div>
-            <div class="fs-1">≈$123</div>
+            <div class="fs-1">≈${{balance*rmb | showMoney}}</div>
           </van-col>
           <van-col span="10" class="user">
-            <div class="title-1">123</div>
-            <div class="fs-1">≈¥123</div>
+            <div class="title-1">{{balance | showCoin}}</div>
+            <div class="fs-1">≈¥{{rmb | showMoney}}</div>
           </van-col>
         </van-row>
       </div>
@@ -29,9 +39,6 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
-import { floatObj } from "../utils/floatNum";
-
 export default {
   name: "item",
   data() {
@@ -44,6 +51,10 @@ export default {
     id: {
       default: ""
     },
+    isPara:{
+      type:Boolean,
+      default:false
+    },
     rmb: {
       default: 0
     },
@@ -54,38 +65,6 @@ export default {
       default: ""
     }
   },
-  filters: {
-    showCoin: function(value) {
-      if (value >= 0) {
-        let numb = floatObj.divide(value, 100000000);
-        return numb.toFixed(4);
-      } else {
-        return "0.0000";
-      }
-    },
-    showMoney: function(value) {
-      if (value >= 0) {
-        let numb = floatObj.divide(value, 100000000);
-        if (!numb) {
-          return "0.00";
-        }
-        return numb.toFixed(2);
-      } else {
-        return "0.00";
-      }
-    }
-  },
-  computed: {
-    ...mapState("appShell/appItem", ["market"])
-    // showBalance() {
-    //   return floatObj.divide(this.balance, 100000000).toFixed(4);
-    // },
-    // showTotal() {
-    //   let total = floatObj.multiply(this.balance, this.value);
-    //   return floatObj.divide(total, 100000000).toFixed(4);
-    // }
-  },
-  mounted() {},
   methods: {
     goDetail(id) {
       this.$router.push(`/detail/${id}`);
@@ -95,12 +74,11 @@ export default {
 };
 </script>
 
-<style lang="stylus" scoped>
-@require '~@/assets/stylus/variable';
-
+<style lang="less" scoped>
+@import "../../style.less";
 .item-card {
-  border-radius: $app-box-border-radius;
-  box-shadow: $box-shadow;
+  .normal-radius;
+  .normal-shadow;
   padding: 15px;
   text-align: left;
   background-color: #fff;
@@ -126,6 +104,19 @@ export default {
 .user {
   text-align: right;
 }
+.tag-box {
+  width: 40px;
+  height: 20px;
+  padding-top: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 20px;
+  background: rgba(132, 158, 248, 1);
+  border-radius: 5px;
+  overflow: hidden;
+  margin-left: 5px;
+}
 
 .item-card {
   margin-bottom: 5px;
@@ -134,5 +125,9 @@ export default {
 .title-1 {
   margin-bottom: 5px;
   font-size: 16px;
+}
+.title-1-left {
+  width: 100%;
+  display: flex;
 }
 </style>

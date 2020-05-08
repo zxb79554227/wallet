@@ -36,6 +36,11 @@ export default {};
 .page-head {
   position: relative;
   padding: 15px 25px;
+  color: @themeWhite;
+  background-image: url("../../assets/img/set-bg.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
   .normal-shadow;
 }
 .comeIn-handbook {
@@ -51,7 +56,7 @@ export default {};
   .van-cell {
     text-align: left;
     margin-bottom: 15px;
-    border-radius: 5px;
+    .normal-radius;
     padding: 15px 10px;
     .normal-shadow;
   }
